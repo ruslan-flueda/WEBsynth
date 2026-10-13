@@ -1,0 +1,12 @@
+{
+  "name": "websynth-v2",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Seven-channel electronic live instrument using the Web Audio API",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/test.mjs",
+    "check": "node scripts/check.mjs"
+  }
+}

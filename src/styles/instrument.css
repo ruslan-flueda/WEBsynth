@@ -1,0 +1,283 @@
+.stage {
+  position: relative;
+  width: 100%;
+  min-height: max(832px,100svh);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(180px,25vh,270px) 16px 24px;
+  background: #000;
+}
+
+.meta {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  color: #888;
+  font-family: Arial,sans-serif;
+  font-size: 10px;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.version {
+  color: #555;
+}
+
+.tempo-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.tempo-control input {
+  width: 105px;
+  height: 12px;
+  margin: 0;
+  accent-color: var(--white);
+  cursor: ew-resize;
+}
+
+.tempo-control output {
+  color: var(--white);
+}
+
+.transport {
+  position: absolute;
+  top: clamp(320px,43vh,390px);
+  left: 10px;
+  width: 71px;
+  height: 50px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #000;
+  display: block;
+}
+
+.transport img {
+  display: block;
+  width: 71px;
+  height: 50px;
+}
+
+.stop-icon {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: var(--white);
+  color: #000;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial,sans-serif;
+  font-size: 15px;
+}
+
+.transport[aria-pressed=true] img {
+  visibility: hidden;
+}
+
+.transport[aria-pressed=true] .stop-icon {
+  display: flex;
+}
+
+.transport:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+.channels {
+  width: min(672px,100%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px 24px;
+}
+
+.channel {
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  align-items: center;
+  transition: opacity .15s;
+}
+
+.channel.solo-muted {
+  opacity: .42;
+}
+
+.channel-name {
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.choices {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 6px;
+}
+
+.choice {
+  width: 100%;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--white);
+  background: var(--white);
+  color: #000;
+  font-size: 14px;
+  line-height: 1;
+  transition: background .12s,color .12s,border-color .12s;
+}
+
+.choice:hover {
+  background: #fff;
+  border-color: #fff;
+}
+
+.choice[aria-pressed=true] {
+  background: #000;
+  color: var(--white);
+}
+
+.choice.pending {
+  border-style: dashed;
+}
+
+.shape-choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shape-choice svg {
+  display: block;
+  width: 27px;
+  height: 24px;
+  overflow: visible;
+}
+
+.shape-choice path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.shape-choice circle {
+  fill: currentColor;
+}
+
+.sliders {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slider {
+  width: 100%;
+  height: 8px;
+  display: block;
+  position: relative;
+  background: var(--grey);
+  cursor: ew-resize;
+}
+
+.slider-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--white);
+  pointer-events: none;
+}
+
+.slider input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+}
+
+.slider:focus-within {
+  outline: 1px solid #fff;
+  outline-offset: 2px;
+}
+
+.channel-actions {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 6px;
+}
+
+.action-button {
+  height: 25px;
+  padding: 0 2px;
+  border: 1px solid #777;
+  background: #000;
+  color: #a9a9a9;
+  font-family: Arial,sans-serif;
+  font-size: 9px;
+  letter-spacing: .08em;
+}
+
+.action-button:hover {
+  border-color: var(--white);
+  color: var(--white);
+}
+
+.action-button[aria-pressed=true] {
+  background: var(--white);
+  border-color: var(--white);
+  color: #000;
+}
+
+.action-button.pending {
+  border-style: dashed;
+}
+
+.readout {
+  width: min(672px,100%);
+  margin-top: 26px;
+  text-align: center;
+  color: #777;
+  font-family: Arial,sans-serif;
+  font-size: 10px;
+  letter-spacing: .12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.footer-art {
+  display: block;
+  width: 150px;
+  height: 50px;
+  object-fit: contain;
+  margin-top: 60px;
+}
+
+.instruction {
+  margin: auto 0 0;
+  padding-top: 44px;
+  text-align: center;
+  color: #555;
+  font-family: Arial,sans-serif;
+  font-size: 9px;
+  letter-spacing: .13em;
+  line-height: 1.5;
+}

@@ -1,0 +1,45 @@
+@font-face {
+  font-family: 'Crimson Text';
+  src: url('../assets/fonts/CrimsonText-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+  --black: #000;
+  --white: #dbdbdb;
+  --grey: #3d3d3d;
+  --font: 'Crimson Text',Georgia,serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100%;
+  background: var(--black);
+  color: var(--white);
+}
+
+body {
+  font-family: var(--font);
+  font-size: 14px;
+}
+
+button,input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button: focus-visible,input:focus-visible {
+  outline: 1px solid #fff;
+  outline-offset: 3px;
+}

@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#000000">
     <meta name="description" content="WEBsynth V2 — инструмент для живого электронного перформанса.">
-    <title>WEBsynth V2</title>
+    <title>WEBsynth</title>
     <link rel="stylesheet" href="styles/base.css">
     <link rel="stylesheet" href="styles/instrument.css">
     <link rel="stylesheet" href="styles/responsive.css">
+    <link rel="stylesheet" href="styles/world.css">
 
     <!-- Ordered classic scripts also support direct file:// opening. -->
     <script defer src="js/config.js"></script>
@@ -28,26 +29,21 @@
     <script defer src="js/sequencer/sequencer.js"></script>
     <script defer src="js/ui/channel-view.js"></script>
     <script defer src="js/ui/app.js"></script>
+    <script defer src="js/visual/pixel-font.js"></script>
+    <script defer src="js/visual/world-state.js"></script>
+    <script defer src="js/visual/ascii-world.js"></script>
     <script defer src="js/main.js"></script>
   </head>
   <body>
+    <canvas id="ascii-world" aria-hidden="true"></canvas>
     <main class="stage">
-      <header class="meta" aria-label="Состояние инструмента">
-        <span>WEBsynth <span class="version">V2</span></span>
-        <label class="tempo-control" for="tempo">
-          <span>TEMPO</span>
-          <input id="tempo" type="range" step="1" aria-label="Темп в BPM">
-          <span><output id="tempo-value" for="tempo">110</output> BPM · D MINOR</span>
-        </label>
-      </header>
+      <div id="tempo-presets" class="tempo-presets" role="group" aria-label="Темп в BPM"></div>
       <button id="transport" class="transport" type="button" aria-label="Начать воспроизведение" aria-pressed="false">
         <img src="assets/images/figma-play.svg" alt="" width="71" height="50">
         <span class="stop-icon" aria-hidden="true">■</span>
       </button>
       <section id="channels" class="channels" aria-label="Музыкальные каналы"></section>
-      <div class="readout" aria-live="polite"><span id="status">ГОТОВО · НАЖМИ PLAY</span></div>
-      <img class="footer-art" src="assets/images/figma-footer.png" alt="" width="150" height="50">
-      <p class="instruction">1 / 2 / 3 — ПАТТЕРНЫ · SHUFFLE — НОВЫЙ РИТМ · SOLO — ТОЛЬКО ЭТОТ КАНАЛ</p>
+      <div id="status" class="sr-only" role="status" aria-live="polite"></div>
     </main>
   </body>
 </html>

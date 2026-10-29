@@ -2,16 +2,10 @@
 (() => {
   "use strict";
 
-  const melodyShapes = [
-    null,
-    { name: "Дуга", path: "M3 18 Q16 2 29 18" },
-    { name: "Зигзаг", path: "M3 17 L9 5 L16 18 L23 5 L29 14" },
-    {
-      name: "Четыре точки",
-      path: "M3 17 L11 8 L20 15 L29 5",
-      points: [[3, 17], [11, 8], [20, 15], [29, 5]],
-    },
-  ];
+  const displayLabels = {
+    volume: "volume", filter: "filter", reverb: "room", drive: "drive",
+    tone: "tone", delay: "echo", vibrato: "vibrato", breath: "breath", shimmer: "shimmer",
+  };
 
   class ChannelView {
     constructor(document, lane, handlers) {
@@ -19,7 +13,7 @@
       this.lane = lane;
       this.element = this.create("div", "channel");
       this.element.dataset.channel = lane.id;
-      const label = this.create("span", "channel-name", lane.name);
+      const label = this.create("span", "channel-name", lane.id === "melody" ? "Mel*dy" : lane.name);
       const choices = this.create("div", "choices");
       const variations = WebSynth.patterns[lane.id].length - 1;
       this.buttons = Array.from({ length: variations }, (_, index) => {
@@ -35,13 +29,15 @@
         sliders.append(this.createSlider(control, handlers.changeParam));
       }
       const actions = this.create("div", "channel-actions");
-      this.shuffle = this.createButton("action-button shuffle-button", "SHUFFLE");
+      this.shuffle = this.createButton("action-button shuffle-button", "shuffle");
       this.shuffle.addEventListener("click", handlers.shuffle);
-      this.solo = this.createButton("action-button solo-button", "SOLO");
+      this.solo = this.createButton("action-button solo-button", "solo");
       this.solo.setAttribute("aria-label", `${lane.name}: слушать только этот канал`);
       this.solo.addEventListener("click", handlers.solo);
-      actions.append(this.shuffle, this.solo);
-      this.element.append(label, choices, sliders, actions);
+      actions.append(this.solo, this.shuffle);
+      const selection = this.create("div", "channel-selection");
+      selection.append(choices, actions);
+      this.element.append(label, selection, sliders);
     }
 
     create(tag, className, text) {
@@ -59,48 +55,35 @@
     }
 
     patternName(variation) {
-      return this.lane.id === "melody"
-        ? melodyShapes[variation].name
-        : `Паттерн ${variation}`;
+      return `Паттерн ${variation}`;
     }
 
     createPatternButton(variation) {
-      const button = this.createButton("choice");
+      const button = this.createButton("choice", String(variation));
       const label = `${this.lane.name}: ${this.patternName(variation)}`;
       button.setAttribute("aria-label", label);
       button.title = label;
-      if (this.lane.id === "melody") {
-        button.classList.add("shape-choice");
-        button.append(this.createShape(melodyShapes[variation]));
-      } else {
-        button.textContent = String(variation);
-      }
       return button;
-    }
-
-    createShape(shape) {
-      const namespace = "http://www.w3.org/2000/svg";
-      const svg = this.document.createElementNS(namespace, "svg");
-      svg.setAttribute("viewBox", "0 0 32 24");
-      svg.setAttribute("aria-hidden", "true");
-      const path = this.document.createElementNS(namespace, "path");
-      path.setAttribute("d", shape.path);
-      svg.append(path);
-      for (const [x, y] of shape.points ?? []) {
-        const dot = this.document.createElementNS(namespace, "circle");
-        dot.setAttribute("cx", x);
-        dot.setAttribute("cy", y);
-        dot.setAttribute("r", "1.8");
-        svg.append(dot);
-      }
-      return svg;
     }
 
     createSlider({ key, label, initial }, onChange) {
       const wrapper = this.create("label", "slider");
       wrapper.title = `${this.lane.name} · ${label}`;
-      const fill = this.create("span", "slider-fill");
-      fill.style.width = `${initial}%`;
+      const caption = this.create("span", "slider-caption", displayLabels[key] || key);
+      const track = this.create("span", "slider-track");
+      track.setAttribute("aria-hidden", "true");
+      const ticks = Array.from({ length: 30 }, () => this.create("span", "slider-tick", "-"));
+      track.append(...ticks);
+      const showValue = value => {
+        const position = Math.round(value / 100 * (ticks.length - 1));
+        ticks.forEach((tick, i) => {
+          tick.textContent = i === position ? "/" : "-";
+          tick.classList.toggle("slider-cursor", i === position);
+          tick.classList.toggle("slider-past", i < position);
+        });
+        wrapper.title = `${this.lane.name} · ${label}: ${value}%`;
+      };
+      showValue(initial);
       const input = this.document.createElement("input");
       input.type = "range";
       input.min = "0";
@@ -110,10 +93,10 @@
       input.setAttribute("aria-label", `${this.lane.name}: ${label}`);
       input.addEventListener("input", () => {
         const value = Number(input.value);
-        fill.style.width = `${value}%`;
+        showValue(value);
         onChange(key, label, value);
       });
-      wrapper.append(fill, input);
+      wrapper.append(caption, track, input);
       return wrapper;
     }
 
@@ -127,7 +110,7 @@
         button.classList.toggle("pending", pending && active);
       });
       const shuffled = sequencer.requestedShuffle(id) !== 0;
-      this.shuffle.textContent = shuffled ? "ORIGINAL" : "SHUFFLE";
+      this.shuffle.textContent = "shuffle";
       this.shuffle.setAttribute("aria-pressed", String(shuffled));
       this.shuffle.setAttribute("aria-label", `${name}: ${shuffled ? "вернуть исходный ритм" : "перемешать ритм"}`);
       this.shuffle.classList.toggle("pending", sequencer.isShufflePending(id));

@@ -37,7 +37,7 @@ class Element {
 
 class FakeDocument {
   constructor() {
-    this.elements = Object.fromEntries(["transport", "status", "tempo", "tempo-value", "channels"]
+    this.elements = Object.fromEntries(["transport", "status", "tempo-presets", "channels"]
       .map((id) => [id, new Element("div")]));
   }
   createElement(tag) { return new Element(tag); }

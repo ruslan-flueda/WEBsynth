@@ -13,7 +13,8 @@
   window.WebSynth = {
     config: Object.freeze({
       defaultBpm: 110,
-      minBpm: 65,
+      minBpm: 60,
+      tempoPresets: Object.freeze([60, 90, 110]),
       maxBpm: 180,
       stepsPerBeat: 4,
       stepsPerBar: 16,

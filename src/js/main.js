@@ -3,10 +3,12 @@
   "use strict";
 
   const app = new WebSynth.App(document);
+  const world = new WebSynth.AsciiWorld(document.querySelector("#ascii-world"), app.sequencer);
   let frameId = null;
 
   function animate() {
     app.sequencer.draw();
+    world.update(performance.now());
     // Expire temporary feedback even when playback is stopped.
     if (app.feedback && performance.now() >= app.feedback.until) {
       app.feedback = null;

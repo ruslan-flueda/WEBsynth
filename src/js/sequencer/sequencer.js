@@ -24,6 +24,7 @@
       this.step = 0;
       this.bar = 0;
       this.queue = [];
+      this.visualFrame = null;
       this.playhead = { step: -1, bar: 0 };
       this.barEvents = {};
     }
@@ -37,6 +38,7 @@
       this.step = 0;
       this.bar = 0;
       this.queue = [];
+      this.visualFrame = null;
       this.playhead = { step: -1, bar: 0 };
       this.nextTime = this.engine.context.currentTime + config.startDelaySeconds;
       this.engine.start(this.active, this.nextTime, this.soloId);
@@ -59,6 +61,7 @@
       this.scheduledPatterns = {};
       this.scheduledShuffles = {};
       this.queue = [];
+      this.visualFrame = null;
       this.barEvents = {};
       this.playhead = { step: -1, bar: 0 };
       this.engine.stop();
@@ -149,6 +152,7 @@
 
     scheduleStep(time) {
       const beatDuration = 60 / this.bpm;
+      const hits = [];
       if (this.step === 0) this.applyBarChanges(time);
       for (const { id } of lanes) {
         const variation = this.active[id];
@@ -156,10 +160,13 @@
         // Calculate shuffled events once per bar, not on every sixteenth note.
         this.barEvents[id] ??= eventsFor(id, variation, this.bar, this.shuffleSeeds[id]);
         for (const event of this.barEvents[id]) {
-          if (event.step === this.step) this.engine.trigger(id, event, time, beatDuration);
+          if (event.step === this.step) {
+            this.engine.trigger(id, event, time, beatDuration);
+            hits.push({ id, velocity: event.velocity });
+          }
         }
       }
-      this.queue.push({ time, step: this.step, bar: this.bar });
+      this.queue.push({ time, step: this.step, bar: this.bar, active: { ...this.active }, hits });
       this.nextTime += beatDuration / config.stepsPerBeat;
       this.step = (this.step + 1) % config.stepsPerBar;
       if (this.step === 0) this.bar = (this.bar + 1) % config.barsPerPattern;
@@ -191,6 +198,7 @@
       }
       if (latest) {
         this.playhead = { step: latest.step, bar: latest.bar };
+        this.visualFrame = latest;
         this.onChange();
       }
     }

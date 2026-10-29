@@ -26,7 +26,7 @@ test("real effects and every channel route dry/reverb/delay to the output", asyn
 test("all patterns can trigger their voices with valid automation at both tempo limits", async () => {
   const { app, engine } = setup();
   await engine.init();
-  for (const bpm of [65, 180]) {
+  for (const bpm of [60, 180]) {
     for (const { id } of app.lanes) {
       for (const bars of app.patterns[id].slice(1)) {
         for (const events of bars) {

@@ -1,45 +1,46 @@
 @font-face {
-  font-family: 'Crimson Text';
-  src: url('../assets/fonts/CrimsonText-Regular.ttf') format('truetype');
+  font-family: 'Argent Pixel CF';
+  src: url('../assets/fonts/ArgentPixelCF-Regular.otf') format('opentype');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
 }
-
+@font-face {
+  font-family: 'Argent Pixel CF';
+  src: url('../assets/fonts/ArgentPixelCF-Italic.otf') format('opentype');
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
 :root {
   color-scheme: dark;
   --black: #000;
   --white: #dbdbdb;
-  --grey: #3d3d3d;
-  --font: 'Crimson Text',Georgia,serif;
+  --grey: #2e2e2e;
+  --font: 'Argent Pixel CF', Georgia, serif;
 }
-
-* {
-  box-sizing: border-box;
-}
-
-html,body {
+* { box-sizing: border-box; }
+html, body {
   margin: 0;
   min-width: 320px;
   min-height: 100%;
   background: var(--black);
   color: var(--white);
 }
-
-body {
-  font-family: var(--font);
-  font-size: 14px;
+body { font-family: var(--font); font-size: 14px; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 1px solid #fff; outline-offset: 3px; }
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%);
+  white-space: nowrap; border: 0;
 }
-
-button,input {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-button: focus-visible,input:focus-visible {
-  outline: 1px solid #fff;
-  outline-offset: 3px;
+.sr-only.status-error {
+  position: fixed; top: 54px; left: 12px;
+  width: auto; height: auto; margin: 0; padding: 8px;
+  clip-path: none; white-space: normal;
+  background: #000; z-index: 5;
 }

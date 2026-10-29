@@ -13,8 +13,7 @@
       this.channelViews = new Map();
       this.transport = document.querySelector("#transport");
       this.status = document.querySelector("#status");
-      this.tempo = document.querySelector("#tempo");
-      this.tempoValue = document.querySelector("#tempo-value");
+      const tempoPresets = document.querySelector("#tempo-presets");
       const channels = document.querySelector("#channels");
 
       for (const lane of lanes) {
@@ -31,14 +30,19 @@
         channels.append(view.element);
       }
 
-      this.tempo.min = String(config.minBpm);
-      this.tempo.max = String(config.maxBpm);
-      this.tempo.value = String(this.sequencer.bpm);
-      this.tempoValue.textContent = String(this.sequencer.bpm);
-      this.tempo.addEventListener("input", () => {
-        const bpm = this.sequencer.setBpm(this.tempo.value);
-        this.tempoValue.textContent = String(bpm);
-        this.showFeedback(`ТЕМП ${bpm} BPM`, 1400);
+      this.tempoButtons = config.tempoPresets.map(bpm => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "tempo-preset";
+        button.textContent = String(bpm);
+        button.dataset.bpm = String(bpm);
+        button.setAttribute("aria-label", `${bpm} BPM`);
+        button.addEventListener("click", () => {
+          this.sequencer.setBpm(bpm);
+          this.showFeedback(`ТЕМП ${bpm} BPM`, 1400);
+        });
+        tempoPresets.append(button);
+        return button;
       });
       this.transport.addEventListener("click", () => this.togglePlayback());
       this.render();
@@ -108,6 +112,10 @@
       this.transport.setAttribute("aria-pressed", String(this.sequencer.running));
       this.transport.setAttribute("aria-label", this.sequencer.running
         ? "Остановить воспроизведение" : "Начать воспроизведение");
+      for (const button of this.tempoButtons ?? []) {
+        button.setAttribute("aria-pressed", String(Number(button.dataset.bpm) === this.sequencer.bpm));
+      }
+      this.status.classList.toggle("status-error", this.feedback?.until === Infinity);
       for (const view of this.channelViews.values()) view.render(this.sequencer);
       const text = this.statusText();
       // Avoid repeating identical announcements in the live region every step.

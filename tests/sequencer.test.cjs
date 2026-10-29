@@ -85,7 +85,7 @@ test("tempo belongs to each sequencer and changes subsequent scheduling interval
   sequencer.setBpm(132);
   assert.equal(other.bpm, 110);
   assert.equal(engine.bpm, 132);
-  for (const invalid of [64, 181, NaN, "abc", 120.5]) assert.equal(sequencer.setBpm(invalid), 132);
+  for (const invalid of [59, 181, NaN, "abc", 120.5]) assert.equal(sequencer.setBpm(invalid), 132);
   await sequencer.start();
   const next = sequencer.nextTime;
   sequencer.setBpm(180);
@@ -125,4 +125,21 @@ test("Solo cancels a pending mute on its channel", async () => {
   sequencer.solo("bass");
   assert.ok(sequencer.active.bass > 0);
   assert.equal(sequencer.isPending("bass"), false);
+});
+
+test("visual snapshots wait for audible time, preserve selection and clear on Stop", async () => {
+  const { sequencer, engine } = setup();
+  sequencer.select("drums", 1);
+  await sequencer.start();
+  const scheduled = sequencer.queue[0];
+  assert.ok(scheduled.hits.some(hit => hit.id === "drums"));
+  sequencer.draw();
+  assert.equal(sequencer.visualFrame, null);
+  engine.context.currentTime = scheduled.time;
+  sequencer.draw();
+  assert.equal(sequencer.visualFrame, scheduled);
+  sequencer.active.drums = 0;
+  assert.equal(scheduled.active.drums, 1);
+  sequencer.stop();
+  assert.equal(sequencer.visualFrame, null);
 });
